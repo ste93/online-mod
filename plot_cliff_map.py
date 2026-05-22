@@ -60,6 +60,8 @@ def plot_cliff_map_with_weight(cliff_map_data, dataset="ATC"):
             plt.quiver(cliff_map_data[i, 0], cliff_map_data[i, 1], u[i], v[i], color=colormap(norm(colors))[i], alpha=weight[i], cmap="hsv",angles='xy', scale_units='xy', scale=1, width=0.003)
         elif dataset == "MAPF":
             plt.quiver(cliff_map_data[i, 0], cliff_map_data[i, 1], u[i], v[i], color=colormap(norm(colors))[i], alpha=weight[i], cmap="hsv",angles='xy', scale_units='xy', scale=0.5)
+        elif dataset == "MADAMA":
+            plt.quiver(cliff_map_data[i, 0], cliff_map_data[i, 1], u[i], v[i], color=colormap(norm(colors))[i], alpha=weight[i], cmap="hsv",angles='xy', scale_units='xy', scale=1, width=0.003)
     
     sm = cm.ScalarMappable(cmap=colormap, norm=norm)
     cbar = plt.colorbar(sm, shrink = 0.5, ticks=[0, 90, 180, 270, 360], fraction=0.05)
@@ -70,6 +72,8 @@ def plot_cliff_map_with_weight(cliff_map_data, dataset="ATC"):
     elif dataset == "MAPF":
         cbar.ax.tick_params(labelsize=15)
         plt.text(121, 29,"Orientation [deg]", rotation='vertical', fontsize=15)
+    elif dataset == "MADAMA":
+        cbar.ax.tick_params(labelsize=10)
         
 
 def plot_cliff_map_atc(cliff_file_name, output_fig_name):
@@ -95,6 +99,18 @@ def plot_cliff_map_mapf(cliff_file_name, output_fig_name):
     plot_cliff_map_with_weight(cliff_map_data, dataset="MAPF")
     plt.savefig(output_fig_name)
 
+
+def plot_cliff_map_madama(cliff_file_name, output_fig_name):
+    cliff_map_data = read_cliff_map_data(cliff_file_name)
+    plt.clf()
+    plt.close('all')
+    plt.figure(figsize=(8, 8), dpi=100)
+    plt.subplot(111, facecolor='white')
+    img = plt.imread("maps/madama.png")
+    plt.imshow(img, cmap='gray', vmin=0, vmax=255, extent=[-40, 25, -35, 25])
+    plot_cliff_map_with_weight(cliff_map_data, dataset="MADAMA")
+    plt.savefig(output_fig_name)
+
     
 if __name__ == "__main__":
     
@@ -111,4 +127,10 @@ if __name__ == "__main__":
     for version in ["initial", "update"]:
         for batch in range(1, 11):
             plot_cliff_map_mapf(f"cliffmaps/mapf/{exp_type}/{version}_split_b{batch}.csv", f"cliffmaps/mapf/{exp_type}/figs/{version}_split_b{batch}.png")
+    ######################################################
+
+    ############# For plotting MADAMA cliffmaps #############
+    # os.makedirs(f"cliffmaps/madama/{exp_type}/figs", exist_ok=True)
+    # for month in ["2024_06", "2024_07", "2024_10", "2024_11"]:
+    #     plot_cliff_map_madama(f"cliffmaps/madama/{exp_type}/madama_{month}.csv", f"cliffmaps/madama/{exp_type}/figs/madama_{month}.png")
     ######################################################

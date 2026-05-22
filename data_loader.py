@@ -3,6 +3,9 @@ import numpy as np
 
 import utils
 
+MOTION_DATASETS = {"ATC", "MAGNI", "MAPF", "MADAMA"}
+
+
 class DataLoader():
 
     def __init__(
@@ -17,23 +20,23 @@ class DataLoader():
         self._load_dataset()
     
     def _load_dataset(self):
-        if self.raw_dataset == 'ATC':
-            data = pd.read_csv(self.raw_data_file, header=None)
-            data.columns = ["time", "person_id", "x", "y", "velocity", "motion_angle"]
-            data['motion_angle'] = np.mod(data['motion_angle'], 2 * np.pi)
-            self.data = data[['time', 'x', 'y', 'velocity', 'motion_angle']]
-            
-        elif self.raw_dataset == 'MAGNI':
-            data = pd.read_csv(self.raw_data_file, header=None)
-            data.columns = ["time", "person_id", "x", "y", "velocity", "motion_angle"]
-            data['motion_angle'] = np.mod(data['motion_angle'], 2 * np.pi)
-            self.data = data[['time', 'x', 'y', 'velocity', 'motion_angle']]
-            
-        elif self.raw_dataset == "MAPF":
-            data = pd.read_csv(self.raw_data_file, header=None)
-            data.columns = ["time", "person_id", "x", "y", "velocity", "motion_angle"]
-            data['motion_angle'] = np.mod(data['motion_angle'], 2 * np.pi)
-            self.data = data[['time', 'x', 'y', 'velocity', 'motion_angle']]
+        if self.raw_dataset in MOTION_DATASETS:
+            self._load_motion_dataset()
+        else:
+            raise ValueError(f"Unsupported raw_dataset: {self.raw_dataset}")
+
+    def _load_motion_dataset(self):
+        data = pd.read_csv(self.raw_data_file, header=None)
+        if data.shape[1] != 6:
+            raise ValueError(
+                f"{self.raw_dataset} data must have 6 columns: "
+                "time, person_id, x, y, velocity, motion_angle. "
+                "For raw MADAMA detection files, run prepare_madama.py first."
+            )
+
+        data.columns = ["time", "person_id", "x", "y", "velocity", "motion_angle"]
+        data['motion_angle'] = np.mod(data['motion_angle'], 2 * np.pi)
+        self.data = data[['time', 'x', 'y', 'velocity', 'motion_angle']]
             
 
     def in_fov(self, x, y, robot_pos, facing_angle, fov_angle, fov_radius):

@@ -1,0 +1,24 @@
+# For exploration online update
+map_file: 'maps/madama.png'
+raw_dataset: 'MADAMA'
+
+# For splitting data into grid
+radius: 1
+step: 1
+dataset_type: 'OBSERVE'
+
+# For mean shift
+convergence_thres_ms: 1e-5
+group_distance_tolerance: 1
+cluster_all: True
+too_few_data_thres: 5
+max_iter_ms: 100
+
+# For EM
+wind_num: 1
+convergence_thres_em: 1e-5
+max_iter_em: 100
+
+# For update EM
+decay_rate: 0.5
+combine_thres: 0.1
