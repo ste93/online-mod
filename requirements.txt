@@ -1,1 +1,5 @@
 scikit-learn
+tqdm
+pandas
+matplotlib
+pyyaml
